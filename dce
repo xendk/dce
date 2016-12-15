@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require "yaml";
+
+class DCE
+  def run
+    dir = Dir.pwd()
+
+    while dir != "/"
+      file = File.join(dir, 'docker-compose.yml')
+      if FileTest.exists?(file)
+        @compose_file = file
+        break;
+      end
+      dir = File.dirname(dir)
+    end
+
+    if !@compose_file
+      STDERR.puts "No docker-compose.yml file found."
+      exit!
+    end
+
+    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    
+    if File.exists? @conf_file
+      container = File.read @conf_file
+    else
+      container = query_container
+      File.write(@conf_file, container)
+    end
+
+    project = File.basename(File.dirname(@compose_file))
+    exec "docker exec -it #{project}_#{container}_1 #{ARGV.join(' ')}"    
+  end
+
+  def query_container
+    containers = get_containers
+    STDERR.puts "Please select container [#{containers.join(', ')}]"
+    choice = STDIN.gets.strip
+    exit if choice.empty?
+    if !containers.include?(choice)
+      STDERR.puts "Illegal choice."
+      exit!
+    end
+    choice
+  end
+
+  def get_containers
+    content = YAML::load(File.read(@compose_file))
+    content.has_key?('version') ? content['services'].keys : content.keys
+  end
+end
+
+app = DCE.new
+app.run
