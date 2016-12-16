@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# TODO:
+# Option to delete .dce_container.
+# -v option to print executed command.
+
 require "yaml";
 require 'shellwords'
 
