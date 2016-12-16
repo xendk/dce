@@ -30,7 +30,7 @@ class DCE
     end
 
     project = File.basename(File.dirname(@compose_file))
-    exec "docker exec -i #{project}_#{container}_1 #{ARGV.join(' ')}"    
+    exec "docker exec -it #{project}_#{container}_1 sh -c '#{ARGV.join(' ')}'"    
   end
 
   def query_container
