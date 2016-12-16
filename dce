@@ -4,7 +4,7 @@
 # Option to delete .dce_container.
 # -v option to print executed command.
 
-require "yaml";
+require 'yaml';
 require 'shellwords'
 
 class DCE
