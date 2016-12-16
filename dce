@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "yaml";
+require 'shellwords'
 
 class DCE
   def run
@@ -30,7 +31,7 @@ class DCE
     end
 
     project = File.basename(File.dirname(@compose_file))
-    exec "docker exec -it #{project}_#{container}_1 sh -c '#{ARGV.join(' ')}'"    
+    exec "docker exec -it #{project}_#{container}_1 sh -c '#{ARGV.shelljoin}'"
   end
 
   def query_container
