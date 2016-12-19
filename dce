@@ -2,7 +2,6 @@
 
 # TODO:
 # Option to delete .dce_container.
-# -v option to print executed command.
 # -h for help.
 # option for using run instead of exec?
 
@@ -40,7 +39,9 @@ class DCE
     end
 
     project = File.basename(File.dirname(@compose_file))
-    exec "docker exec -it #{project}_#{@container}_1 sh -c '#{ARGV.shelljoin}'"
+    command = "docker exec -it #{project}_#{@container}_1 sh -c '#{ARGV.shelljoin}'"
+    STDERR.puts "Exec'ing: " + command if @verbose
+    exec command
   end
 
   def parse_args
@@ -55,6 +56,23 @@ class DCE
           STDERR.puts "Unknown container #{@container}"
           exit!
         end
+      when '-v', '--verbose'
+        @verbose = true
+      when '-h', '--help'
+        STDERR.puts <<-HEREDOC
+Usage: #{File.basename($0)} [OPTIONS]... COMMAND
+Runs COMMAND in docker-compose container.
+
+On first run, asks for the service container to use and saves it to .dce_container next
+to the docker-compose.yml file.
+
+Options:
+  -c, --container SERVICE     use the container of the specified service
+                              ignores the .dce_container file for this command
+  -v, --verbose               print exec'ed command
+  -h, --help                  print this help and exit
+
+        HEREDOC
       else
         STDERR.puts "Unknown option #{option}"
         exit!
