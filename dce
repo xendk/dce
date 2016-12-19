@@ -27,33 +27,39 @@ class DCE
       exit!
     end
 
+    parse_args
+
+    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    if !@container
+      if File.exists? @conf_file
+        @container = File.read @conf_file
+      else
+        @container = query_container
+        File.write(@conf_file, @container)
+      end
+    end
+
+    project = File.basename(File.dirname(@compose_file))
+    exec "docker exec -it #{project}_#{@container}_1 sh -c '#{ARGV.shelljoin}'"
+  end
+
+  def parse_args
     # Not using a proper option parse library, as it will get confused
     # by options for the command given. We use a simple parser.
-    # todo: roll into method.
     if /^-/ =~ ARGV[0]
       option = ARGV.shift
       case option
       when '-c', '--container'
-        container = ARGV.shift
-        # todo: check if it exists
+        @container = ARGV.shift
+        if !get_containers.include? @container
+          STDERR.puts "Unknown container #{@container}"
+          exit!
+        end
       else
         STDERR.puts "Unknown option #{option}"
         exit!
       end
     end
-    
-    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
-    if !container
-      if File.exists? @conf_file
-        container = File.read @conf_file
-      else
-        container = query_container
-        File.write(@conf_file, container)
-      end
-    end
-
-    project = File.basename(File.dirname(@compose_file))
-    exec "docker exec -it #{project}_#{container}_1 sh -c '#{ARGV.shelljoin}'"
   end
 
   def query_container
