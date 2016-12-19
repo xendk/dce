@@ -3,6 +3,8 @@
 # TODO:
 # Option to delete .dce_container.
 # -v option to print executed command.
+# -h for help.
+# option for using run instead of exec?
 
 require 'yaml';
 require 'shellwords'
@@ -25,13 +27,29 @@ class DCE
       exit!
     end
 
-    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    # Not using a proper option parse library, as it will get confused
+    # by options for the command given. We use a simple parser.
+    # todo: roll into method.
+    if /^-/ =~ ARGV[0]
+      option = ARGV.shift
+      case option
+      when '-c', '--container'
+        container = ARGV.shift
+        # todo: check if it exists
+      else
+        STDERR.puts "Unknown option #{option}"
+        exit!
+      end
+    end
     
-    if File.exists? @conf_file
-      container = File.read @conf_file
-    else
-      container = query_container
-      File.write(@conf_file, container)
+    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    if !container
+      if File.exists? @conf_file
+        container = File.read @conf_file
+      else
+        container = query_container
+        File.write(@conf_file, container)
+      end
     end
 
     project = File.basename(File.dirname(@compose_file))
