@@ -38,8 +38,10 @@ class DCE
       end
     end
 
+    args = 'i'
+    args += 't' if STDIN.tty?
     project = File.basename(File.dirname(@compose_file))
-    command = "docker exec -it #{project}_#{@container}_1 sh -c '#{ARGV.shelljoin}'"
+    command = "docker exec -#{args} #{project}_#{@container}_1 sh -c '#{ARGV.shelljoin}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command
   end
