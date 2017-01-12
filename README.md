@@ -18,8 +18,8 @@ Options:
 -h, --help                  print this help and exit
 ```
 
-Optional, but nice setup
-------------------------
+Optional, but nice, setup
+-------------------------
 
 * Add `.dce_container` to `$HOME/.gitexcludes`.
 * `alias dc=dacker-compose`
