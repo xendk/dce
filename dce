@@ -2,7 +2,6 @@
 
 # TODO:
 # Option to delete .dce_container.
-# -h for help.
 # option for using run instead of exec?
 
 require 'yaml';
