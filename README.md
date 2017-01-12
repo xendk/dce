@@ -24,3 +24,4 @@ Optional, but nice setup
 * Add `.dce_container` to `$HOME/.gitexcludes`.
 * `alias dc=dacker-compose`
 * `alias dcd="dce drush"`
+* `alias dcs="dce sh -c \"if [ -e /bin/bash ]; then /bin/bash; else /bin/sh;fi\""`
