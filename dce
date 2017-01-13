@@ -46,7 +46,7 @@ class DCE
   def parse_args
     # Not using a proper option parse library, as it will get confused
     # by options for the command given. We use a simple parser.
-    if /^-/ =~ ARGV[0]
+    while /^-/ =~ ARGV[0]
       option = ARGV.shift
       case option
       when '-c', '--container'
