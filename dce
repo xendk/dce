@@ -2,7 +2,8 @@
 
 # TODO:
 # Option to delete .dce_container.
-# option for using run instead of exec?
+# Option to output selected container.
+# Option for using run instead of exec?
 
 require 'yaml';
 require 'shellwords'
@@ -28,13 +29,17 @@ class DCE
     parse_args
 
     @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    config_container = nil
+    if File.exists? @conf_file
+      config_container = File.read @conf_file
+    end
+
     if !@container
-      if File.exists? @conf_file
-        @container = File.read @conf_file
-      else
-        @container = query_container
-        File.write(@conf_file, @container)
-      end
+      @container = config_container ? config_container : query_container
+    end
+
+    if @container != config_container
+      File.write(@conf_file, @container)
     end
 
     args = '-T' unless STDIN.tty?
@@ -67,7 +72,7 @@ to the docker-compose.yml file.
 
 Options:
   -c, --container SERVICE     use the container of the specified service
-                              ignores the .dce_container file for this command
+                              replaces the selected container in the .dce_container
   -v, --verbose               print exec'ed command
   -h, --help                  print this help and exit
 
