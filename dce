@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# TODO:
+# Wishlist:
 # Option to delete .dce_container.
 # Option to output selected container.
 # Option for using run instead of exec?
