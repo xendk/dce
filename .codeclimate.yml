@@ -9,5 +9,7 @@ engines:
   rubymotion:
     enabled: true
 ratings:
-  paths: []
+  paths:
+    - "dce"
+    - "**.rb"
 exclude_paths: []
