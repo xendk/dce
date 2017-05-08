@@ -1,6 +1,9 @@
 DCE
 ===
 
+[![Code Climate](https://codeclimate.com/github/xendk/dce/badges/gpa.svg)](https://codeclimate.com/github/xendk/dce)
+[![Issue Count](https://codeclimate.com/github/xendk/dce/badges/issue_count.svg)](https://codeclimate.com/github/xendk/dce)
+
 Simple command for running commands in a docker container started by
 docker-compose.
 
@@ -13,8 +16,9 @@ to the docker-compose.yml file.
 
 Options:
 -c, --container SERVICE     use the container of the specified service
-                            ignores the .dce_container file for this command
+replaces the selected container in the .dce_container
 -v, --verbose               print exec'ed command
+-?, --print-service         print the service saved
 -h, --help                  print this help and exit
 ```
 
