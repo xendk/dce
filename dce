@@ -9,8 +9,9 @@ require 'shellwords'
 
 class DCE
   def run
-    dir = Dir.pwd()
+    parse_args
 
+    dir = Dir.pwd()
     while dir != "/"
       file = File.join(dir, 'docker-compose.yml')
       if FileTest.exists?(file)
@@ -24,8 +25,6 @@ class DCE
       STDERR.puts "No docker-compose.yml file found."
       exit!
     end
-
-    parse_args
 
     @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
     config_container = nil
@@ -89,6 +88,7 @@ Options:
   -h, --help                  print this help and exit
 
         HEREDOC
+        exit
       else
         STDERR.puts "Unknown option #{option}"
         exit!
