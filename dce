@@ -4,7 +4,7 @@
 # Option to delete .dce_container.
 # Option for using run instead of exec?
 
-require 'yaml';
+require 'yaml'
 require 'shellwords'
 
 class DCE
