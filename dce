@@ -5,7 +5,6 @@
 # Option for using run instead of exec?
 
 require 'yaml'
-require 'shellwords'
 
 class DCE
   def run
@@ -51,7 +50,7 @@ class DCE
     end
 
     args = '-T' unless STDIN.tty?
-    command = "docker-compose exec #{args} #{@container} sh -c '#{ARGV.shelljoin}'"
+    command = "docker-compose exec #{args} #{@container} sh -c '#{ARGV.join(' ')}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command
   end
