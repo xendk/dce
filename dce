@@ -7,6 +7,7 @@
 require 'yaml'
 
 class DCE
+  # Run the command
   def run
     parse_args
 
@@ -40,6 +41,8 @@ class DCE
     exec command
   end
 
+  # Return path to the docker-compose.yml file
+  # Will exit with an error if not found
   def docker_compose_file
     unless @compose_file
       dir = Dir.pwd()
@@ -61,6 +64,7 @@ class DCE
     return @compose_file
   end
 
+  # Parse command line arguments
   def parse_args
     # Not using a proper option parse library, as it will get confused
     # by options for the command given. We use a simple parser.
@@ -101,6 +105,8 @@ Options:
     end
   end
 
+  # Ask the user to select a container
+  # The options are taken from the docker-compose.yml file
   def query_container
     containers = get_containers
     STDERR.puts "Please select container [#{containers.join(', ')}]"
@@ -113,6 +119,7 @@ Options:
     choice
   end
 
+  # Read containers from docker-compose.yml
   def get_containers
     content = YAML::load(File.read(docker_compose_file))
     content.has_key?('version') ? content['services'].keys : content.keys
