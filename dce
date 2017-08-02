@@ -10,22 +10,7 @@ class DCE
   def run
     parse_args
 
-    dir = Dir.pwd()
-    while dir != "/"
-      file = File.join(dir, 'docker-compose.yml')
-      if FileTest.exists?(file)
-        @compose_file = file
-        break;
-      end
-      dir = File.dirname(dir)
-    end
-
-    if !@compose_file
-      STDERR.puts "No docker-compose.yml file found."
-      exit!
-    end
-
-    @conf_file = File.join(File.dirname(@compose_file), '.dce_container')
+    @conf_file = File.join(File.dirname(docker_compose_file), '.dce_container')
     config_container = nil
     if File.exists? @conf_file
       config_container = File.read @conf_file
@@ -53,6 +38,27 @@ class DCE
     command = "docker-compose exec #{args} #{@container} sh -c '#{ARGV.join(' ')}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command
+  end
+
+  def docker_compose_file
+    unless @compose_file
+      dir = Dir.pwd()
+      while dir != "/"
+        file = File.join(dir, 'docker-compose.yml')
+        if FileTest.exists?(file)
+          @compose_file = file
+          break;
+        end
+        dir = File.dirname(dir)
+      end
+
+      if !@compose_file
+        STDERR.puts "No docker-compose.yml file found."
+        exit!
+      end
+    end
+
+    return @compose_file
   end
 
   def parse_args
@@ -108,7 +114,7 @@ Options:
   end
 
   def get_containers
-    content = YAML::load(File.read(@compose_file))
+    content = YAML::load(File.read(docker_compose_file))
     content.has_key?('version') ? content['services'].keys : content.keys
   end
 end
