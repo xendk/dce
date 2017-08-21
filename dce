@@ -35,8 +35,10 @@ class DCE
       File.write(@conf_file, @container)
     end
 
-    args = '-T' unless STDIN.tty?
-    command = "docker-compose exec #{args} #{@container} sh -c '#{ARGV.join(' ')}'"
+    args = '-i'
+    args += 't' if STDIN.tty?
+    container_id = %x{docker-compose ps -q #{@container}}.chomp
+    command = "docker exec #{args} #{container_id} sh -c '#{ARGV.join(' ')}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command
   end
