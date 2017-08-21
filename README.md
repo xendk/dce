@@ -3,6 +3,7 @@ DCE
 
 [![Code Climate](https://codeclimate.com/github/xendk/dce/badges/gpa.svg)](https://codeclimate.com/github/xendk/dce)
 [![Issue Count](https://codeclimate.com/github/xendk/dce/badges/issue_count.svg)](https://codeclimate.com/github/xendk/dce)
+[![Build Status](https://travis-ci.org/xendk/dce.svg?branch=master)](https://travis-ci.org/xendk/dce)
 
 Simple command for running commands in a docker container started by
 docker-compose.
