@@ -22,7 +22,7 @@ Then(/^I should see the output$/) do |string|
   raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === string
 end
 
-After do |scenario|
+After do
   system "docker-compose stop -t 0  2>/dev/null; docker-compose rm -vf  >/dev/null 2>/dev/null" if @project
   Dir.chdir(@old_dir) if @old_dir
 end
