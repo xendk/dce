@@ -22,7 +22,7 @@ Feature: Run commands
 
       """
 
-  Scenario: Piping into ontainer
+  Scenario: Piping into container
     Given I'm in the simple project
     When I run "echo test | dce 'cat'"
     Then I should see the output
@@ -30,7 +30,7 @@ Feature: Run commands
       test
       """
 
-  Scenario: Piping out of ontainer
+  Scenario: Piping out of container
     Given I'm in the simple project
     When I run "dce 'echo test' | cat -"
     Then I should see the output
