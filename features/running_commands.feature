@@ -37,3 +37,9 @@ Feature: Run commands
       """
       test
       """
+
+  Scenario: Dry run
+    Given I'm in the simple project
+    When I run "dce -n 'echo test'"
+    Then I should see the verbose command message
+    And I should see no output

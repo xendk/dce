@@ -40,7 +40,7 @@ class DCE
     container_id = %x{docker-compose ps -q #{@container}}.chomp
     command = "docker exec #{args} #{container_id} sh -c '#{ARGV.join(' ')}'"
     STDERR.puts "Exec'ing: " + command if @verbose
-    exec command
+    exec command unless @dry_run
   end
 
   # Return path to the docker-compose.yml file
@@ -81,6 +81,9 @@ class DCE
         end
       when '-v', '--verbose'
         @verbose = true
+      when '-n', '--dry-run'
+        @verbose = true
+        @dry_run = true
       when '-?', '--print-service'
         @query = true
       when '-h', '--help'
@@ -95,6 +98,7 @@ Options:
   -c, --container SERVICE     use the container of the specified service
                               replaces the selected container in the .dce_container
   -v, --verbose               print exec'ed command
+  -n, --dry-run               only print exec'ed command, don't run
   -?, --print-service         print the service saved
   -h, --help                  print this help and exit
 

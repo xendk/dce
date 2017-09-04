@@ -22,6 +22,20 @@ Then(/^I should see the output$/) do |string|
   raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === string
 end
 
+Then(/^I should see the verbose command message$/) do
+  raise "No verbose message seen" unless @stderr.match(/^Exec'ing: docker exec/)
+end
+
+Then(/^I should see no output$/) do
+  raise "Unexpected output \"#{@stdout}\"" unless @stdout == ""
+end
+
+Then(/^I should only see verbose command message$/) do
+  unless @stderr.match(/^Exec'ing: docker exec/) and @stdout.lines.size == 1
+    raise "Output \"#{@stdout}\" isn't just the verbose message"
+  end
+end
+
 After do
   system "docker-compose stop -t 0  2>/dev/null; docker-compose rm -vf  >/dev/null 2>/dev/null" if @project
   Dir.chdir(@old_dir) if @old_dir
