@@ -2,11 +2,12 @@ Feature: Run commands
 
   Scenario: Simple command
     Given I'm in the simple project
-    When I run "dce ls --color=never"
+    When I run "dce ls /media --color=never"
     Then I should see the output
       """
-      bin    etc    lib    mnt    root   sbin   sys    usr
-      dev    home   media  proc   run    srv    tmp    var
+      cdrom
+      floppy
+      usb
       """
 
   Scenario: Pipes in container

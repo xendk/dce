@@ -1,3 +1,4 @@
+require 'open3'
 require 'timeout'
 
 Given(/^I'm in the ([^ ]+) project$/) do |project|
@@ -10,13 +11,15 @@ end
 
 When(/^I run "([^"]*)"$/) do |command|
   Timeout::timeout 2 do
+    @stdout, @stderr, @status = Open3.capture3(command)
     # Deal with carriage returns and trailing newline.
-    @output = %x(#{command}).chomp.gsub(/\r\n/, "\n")
+    @stdout = @stdout.chomp.gsub(/\r\n/, "\n")
+    @stderr = @stderr.chomp.gsub(/\r\n/, "\n")
   end
 end
 
 Then(/^I should see the output$/) do |string|
-  raise "Output \"#{@output}\" does not match expected output" unless @output === string
+  raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === string
 end
 
 After do |scenario|
