@@ -35,10 +35,15 @@ class DCE
       File.write(@conf_file, @container)
     end
 
+    # If no command given, open a shell.
+    if (@command.strip.empty?)
+      @command = "if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi"
+    end
+
     args = '-i'
     args += 't' if STDIN.tty?
     container_id = %x{docker-compose ps -q #{@container}}.chomp
-    command = "docker exec #{args} #{container_id} sh -c '#{ARGV.join(' ')}'"
+    command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command unless @dry_run
   end
@@ -94,6 +99,8 @@ Runs COMMAND in docker-compose container.
 On first run, asks for the service container to use and saves it to .dce_container next
 to the docker-compose.yml file.
 
+If no command given, opens a shell.
+
 Options:
   -c, --container SERVICE     use the container of the specified service
                               replaces the selected container in the .dce_container
@@ -109,6 +116,8 @@ Options:
         exit!
       end
     end
+
+    @command = ARGV.join(' ')
   end
 
   # Ask the user to select a container

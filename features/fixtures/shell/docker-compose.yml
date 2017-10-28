@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  shell:
+    build: shell-image
+    # Just keep it up for one minute. Should be enough for the tests.
+    entrypoint: sleep 60

@@ -15,6 +15,8 @@ Runs COMMAND in docker-compose container.
 On first run, asks for the service container to use and saves it to .dce_container next
 to the docker-compose.yml file.
 
+If no command given, opens a shell.
+
 Options:
 -c, --container SERVICE     use the container of the specified service
 replaces the selected container in the .dce_container
@@ -30,7 +32,6 @@ Optional, but nice, setup
 * Add `.dce_container` to `$HOME/.gitexcludes`.
 * `alias dc=docker-compose`
 * `alias dcd="dce drush"`
-* `alias dcs="dce 'if [ -e /bin/bash ]; then /bin/bash; else /bin/sh;fi'"`
 
 Limitations
 -----------

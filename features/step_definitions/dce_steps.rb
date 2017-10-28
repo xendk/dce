@@ -1,6 +1,16 @@
 require 'open3'
 require 'timeout'
 
+def run(command)
+  Timeout::timeout 2 do
+    stdout, stderr, status = Open3.capture3(command)
+    # Deal with carriage returns and trailing newline.
+    stdout = stdout.chomp.gsub(/\r\n/, "\n")
+    stderr = stderr.chomp.gsub(/\r\n/, "\n")
+    return stdout, stderr, status
+  end
+end
+
 Given(/^I'm in the ([^ ]+) project$/) do |project|
   raise "Already in a project" if @project
   @old_dir = Dir.pwd
@@ -9,13 +19,13 @@ Given(/^I'm in the ([^ ]+) project$/) do |project|
   @project = project
 end
 
+Given(/^it has ([^ ]+) installed$/) do |shell|
+  stdout, = run("dce install-#{shell}")
+  stdout.match(/Installed #{shell}/) or raise "Could not 'install' shell #{shell}"
+end
+
 When(/^I run "([^"]*)"$/) do |command|
-  Timeout::timeout 2 do
-    @stdout, @stderr, @status = Open3.capture3(command)
-    # Deal with carriage returns and trailing newline.
-    @stdout = @stdout.chomp.gsub(/\r\n/, "\n")
-    @stderr = @stderr.chomp.gsub(/\r\n/, "\n")
-  end
+  @stdout, @stderr, @status = run(command)
 end
 
 Then(/^I should see the output$/) do |string|
