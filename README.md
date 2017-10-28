@@ -5,8 +5,8 @@ DCE
 [![Issue Count](https://codeclimate.com/github/xendk/dce/badges/issue_count.svg)](https://codeclimate.com/github/xendk/dce)
 [![Build Status](https://travis-ci.org/xendk/dce.svg?branch=master)](https://travis-ci.org/xendk/dce)
 
-Simple command for running commands in a docker container started by
-docker-compose.
+Simple command for running shell commands in a docker container
+started by docker-compose.
 
 ```shell
 Usage: dce [OPTIONS]... COMMAND
@@ -31,3 +31,8 @@ Optional, but nice, setup
 * `alias dc=docker-compose`
 * `alias dcd="dce drush"`
 * `alias dcs="dce 'if [ -e /bin/bash ]; then /bin/bash; else /bin/sh;fi'"`
+
+Limitations
+-----------
+
+DCE currently require the container to have `/bin/sh`.
