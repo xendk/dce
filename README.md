@@ -23,6 +23,8 @@ replaces the selected container in the .dce_container
 -v, --verbose               print exec'ed command
 -n, --dry-run               only print exec'ed command, don't run
 -s, --copy-keys             copy keys from $HOME/.ssh into the container
+-S, --copy-keys-only        same as the above, but don't run command or start a
+shell
 -?, --print-service         print the service saved
 -h, --help                  print this help and exit
 ```
