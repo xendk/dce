@@ -26,13 +26,54 @@ class DCE
         exit!
       end
     end
-    
+
     if !@container
       @container = config_container ? config_container : query_container
     end
 
     if @container != config_container
       File.write(@conf_file, @container)
+    end
+
+    container_id = %x{docker-compose ps -q #{@container}}.chomp
+    unless container_id
+      STDERR.puts("Could not find container \"#{container}\".")
+      exit!
+    end
+
+    if @copy_keys
+      container_home = %x{docker exec #{container_id} sh -c 'echo $HOME'}.chomp
+      unless container_home
+        STDERR.puts("Could not find container $HOME.")
+        exit!
+      end
+      container_ssh_dir = File.join(container_home, '.ssh')
+      ssh_dir = File.join(ENV['HOME'], '.ssh')
+
+      unless FileTest.directory? ssh_dir
+        STDERR.puts("Could not read .ssh directory.")
+        exit!
+      end
+
+      ssh_files = Dir.entries(ssh_dir).collect { |name| File.join(ssh_dir, name) }.sort
+      # Only keep plain files. Also weeds out the . and .. directories.
+      ssh_files.select! { |file| FileTest.file? file }
+
+      unless @dry_run or system "docker exec #{container_id} sh -c 'test -e #{ssh_dir} || mkdir -p #{container_ssh_dir}'"
+        STDERR.puts("Could not create #{container_ssh_dir}.")
+        exit!
+      end
+
+      ssh_files.each do |file|
+        base_file = File.basename(file)
+        puts "Installing #{base_file}"
+        destination_file = File.join(container_ssh_dir, base_file)
+        command = "docker cp #{file} #{container_id}:#{destination_file}"
+        system command unless @dry_run
+      end
+
+      # Ensure permissions that ssh wont complain about.
+      system "docker exec #{container_id} sh -c 'chmod 700 -R #{container_ssh_dir}'"
     end
 
     # If no command given, open a shell.
@@ -42,7 +83,6 @@ class DCE
 
     args = '-i'
     args += 't' if STDIN.tty?
-    container_id = %x{docker-compose ps -q #{@container}}.chomp
     command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
     STDERR.puts "Exec'ing: " + command if @verbose
     exec command unless @dry_run
@@ -55,7 +95,7 @@ class DCE
       dir = Dir.pwd()
       while dir != "/"
         file = File.join(dir, 'docker-compose.yml')
-        if FileTest.exists?(file)
+        if File.exists?(file)
           @compose_file = file
           break;
         end
@@ -89,6 +129,8 @@ class DCE
       when '-n', '--dry-run'
         @verbose = true
         @dry_run = true
+      when '-s', '--copy-keys'
+        @copy_keys = true
       when '-?', '--print-service'
         @query = true
       when '-h', '--help'
@@ -106,6 +148,7 @@ Options:
                               replaces the selected container in the .dce_container
   -v, --verbose               print exec'ed command
   -n, --dry-run               only print exec'ed command, don't run
+  -s, --copy-keys             copy keys from $HOME/.ssh into the container
   -?, --print-service         print the service saved
   -h, --help                  print this help and exit
 

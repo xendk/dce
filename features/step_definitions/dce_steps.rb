@@ -1,5 +1,7 @@
 require 'open3'
 require 'timeout'
+require 'fileutils'
+require 'tmpdir'
 
 def run(command)
   Timeout::timeout 2 do
@@ -8,6 +10,14 @@ def run(command)
     stdout = stdout.chomp.gsub(/\r\n/, "\n")
     stderr = stderr.chomp.gsub(/\r\n/, "\n")
     return stdout, stderr, status
+  end
+end
+
+def ensure_ssh
+  unless @home
+    @home = Dir.mktmpdir
+    ENV['HOME'] = @home
+    Dir.mkdir File.join(@home, '.ssh')
   end
 end
 
@@ -28,8 +38,8 @@ When(/^I run "([^"]*)"$/) do |command|
   @stdout, @stderr, @status = run(command)
 end
 
-Then(/^I should see the output$/) do |string|
-  raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === string
+Then(/^I should see the output$/) do |output|
+  raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === output
 end
 
 Then(/^I should see the verbose command message$/) do
@@ -48,8 +58,26 @@ Then(/^I should only see verbose command message$/) do
   @stderr.gsub!(/^Exec'ing: docker exec.*$/, '');
 end
 
+Then(/^the output of "([^"]*)" should be$/) do |command, output|
+  @stdout, @stderr, @status = run(command)
+  raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === output
+end
+
+Given(/^I have a "([^"]*)" ssh key$/) do |key|
+  ensure_ssh
+  File.write(File.join(@home, '.ssh', key), "#{key} file\n")
+end
+
+Given(/^I have a "([^"]*)" directory in my ssh directory$/) do |dir|
+  ensure_ssh
+
+  Dir.mkdir File.join(@home, '.ssh', dir)
+end
+
+
 After do
   system "docker-compose stop -t 0  2>/dev/null; docker-compose rm -vf  >/dev/null 2>/dev/null" if @project
   Dir.chdir(@old_dir) if @old_dir
+  FileUtils.rm_r @home if @ssh
   raise "Unexpected stderr output: #{@stderr}" unless @stderr.empty?
 end
