@@ -6,89 +6,86 @@
 
 require 'yaml'
 
+# Exception for error exit.
+class DCEError < StandardError
+end
+
 class DCE
   # Run the command
   def run
-    parse_args
+    begin
+      parse_args
 
-    @conf_file = File.join(File.dirname(docker_compose_file), '.dce_container')
-    config_container = nil
-    if File.exists? @conf_file
-      config_container = File.read @conf_file
-    end
-
-    if @query
-      if config_container
-        STDOUT.puts(config_container)
-        exit
-      else
-        STDERR.puts("No container saved.")
-        exit!
+      @conf_file = File.join(File.dirname(docker_compose_file), '.dce_container')
+      config_container = nil
+      if File.exists? @conf_file
+        config_container = File.read @conf_file
       end
-    end
 
-    if !@container
-      @container = config_container ? config_container : query_container
-    end
+      if @query
+        if config_container
+          STDOUT.puts(config_container)
+          exit
+        end
+        raise DCEError, "No container saved."
+      end
 
-    if @container != config_container
-      File.write(@conf_file, @container)
-    end
+      if !@container
+        @container = config_container ? config_container : query_container
+      end
 
-    container_id = %x{docker-compose ps -q #{@container}}.chomp
-    unless container_id
-      STDERR.puts("Could not find container \"#{container}\".")
+      if @container != config_container
+        File.write(@conf_file, @container)
+      end
+
+      container_id = %x{docker-compose ps -q #{@container}}.chomp
+      raise DCEError, "Could not find container \"#{container}\"." unless container_id
+
+      if @copy_keys
+        container_home = %x{docker exec #{container_id} sh -c 'echo $HOME'}.chomp
+        raise DCEError, "Could not find container $HOME." unless container_home
+
+        container_ssh_dir = File.join(container_home, '.ssh')
+        ssh_dir = File.join(ENV['HOME'], '.ssh')
+
+        raise DCEError, "Could not read .ssh directory." unless FileTest.directory? ssh_dir
+
+        ssh_files = Dir.entries(ssh_dir).collect { |name| File.join(ssh_dir, name) }.sort
+        # Only keep plain files. Also weeds out the . and .. directories.
+        ssh_files.select! { |file| FileTest.file? file }
+
+        raise DCEError, "Could not create #{container_ssh_dir}." unless @dry_run or
+          system "docker exec #{container_id} sh -c 'test -e #{ssh_dir} || mkdir -p #{container_ssh_dir}'"
+
+        ssh_files.each do |file|
+          base_file = File.basename(file)
+          puts "Installing #{base_file}"
+          destination_file = File.join(container_ssh_dir, base_file)
+          command = "docker cp #{file} #{container_id}:#{destination_file}"
+          system command unless @dry_run
+        end
+
+        # Ensure permissions that ssh wont complain about.
+        system "docker exec #{container_id} sh -c 'chmod 700 -R #{container_ssh_dir}'"
+        if @copy_keys_only
+          exit
+        end
+      end
+
+      # If no command given, open a shell.
+      if (@command.strip.empty?)
+        @command = "if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi"
+      end
+
+      args = '-i'
+      args += 't' if STDIN.tty?
+      command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
+      STDERR.puts "Exec'ing: " + command if @verbose
+      exec command unless @dry_run
+    rescue DCEError => e
+      STDERR.puts(e.to_s)
       exit!
     end
-
-    if @copy_keys
-      container_home = %x{docker exec #{container_id} sh -c 'echo $HOME'}.chomp
-      unless container_home
-        STDERR.puts("Could not find container $HOME.")
-        exit!
-      end
-      container_ssh_dir = File.join(container_home, '.ssh')
-      ssh_dir = File.join(ENV['HOME'], '.ssh')
-
-      unless FileTest.directory? ssh_dir
-        STDERR.puts("Could not read .ssh directory.")
-        exit!
-      end
-
-      ssh_files = Dir.entries(ssh_dir).collect { |name| File.join(ssh_dir, name) }.sort
-      # Only keep plain files. Also weeds out the . and .. directories.
-      ssh_files.select! { |file| FileTest.file? file }
-
-      unless @dry_run or system "docker exec #{container_id} sh -c 'test -e #{ssh_dir} || mkdir -p #{container_ssh_dir}'"
-        STDERR.puts("Could not create #{container_ssh_dir}.")
-        exit!
-      end
-
-      ssh_files.each do |file|
-        base_file = File.basename(file)
-        puts "Installing #{base_file}"
-        destination_file = File.join(container_ssh_dir, base_file)
-        command = "docker cp #{file} #{container_id}:#{destination_file}"
-        system command unless @dry_run
-      end
-
-      # Ensure permissions that ssh wont complain about.
-      system "docker exec #{container_id} sh -c 'chmod 700 -R #{container_ssh_dir}'"
-      if @copy_keys_only
-        exit
-      end
-    end
-
-    # If no command given, open a shell.
-    if (@command.strip.empty?)
-      @command = "if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi"
-    end
-
-    args = '-i'
-    args += 't' if STDIN.tty?
-    command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
-    STDERR.puts "Exec'ing: " + command if @verbose
-    exec command unless @dry_run
   end
 
   # Return path to the docker-compose.yml file
@@ -105,10 +102,7 @@ class DCE
         dir = File.dirname(dir)
       end
 
-      if !@compose_file
-        STDERR.puts "No docker-compose.yml file found."
-        exit!
-      end
+      raise DCEError, "No docker-compose.yml file found." if !@compose_file
     end
 
     return @compose_file
@@ -123,10 +117,7 @@ class DCE
       case option
       when '-c', '--container'
         @container = ARGV.shift
-        if !get_containers.include? @container
-          STDERR.puts "Unknown container #{@container}"
-          exit!
-        end
+        raise DCEError, "Unknown container #{@container}" unless get_containers.include? @container
       when '-v', '--verbose'
         @verbose = true
       when '-n', '--dry-run'
@@ -163,8 +154,7 @@ Options:
         HEREDOC
         exit
       else
-        STDERR.puts "Unknown option #{option}"
-        exit!
+        raise DCEError, "Unknown option #{option}"
       end
     end
 
@@ -178,10 +168,7 @@ Options:
     STDERR.puts "Please select container [#{containers.join(', ')}]"
     choice = STDIN.gets.strip
     exit if choice.empty?
-    if !containers.include?(choice)
-      STDERR.puts "Illegal choice."
-      exit!
-    end
+    raise DCEError, "Illegal choice." unless !containers.include?(choice)
     choice
   end
 
