@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.6
 
 # Install a shell script as /bin/sh that outputs the invoced name and
 # exists. We need an installer to run in the container, as the build
