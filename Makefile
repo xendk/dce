@@ -12,3 +12,6 @@ build: dce-$(VERSION).gem
 
 release: dce-$(VERSION).gem
 	gem push dce-$(VERSION).gem
+
+clean:
+	rm dce-*.gem
