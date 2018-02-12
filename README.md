@@ -4,10 +4,10 @@ DCE
 [![Travis](https://img.shields.io/travis/xendk/dce.svg?style=for-the-badge)](https://travis-ci.org/xendk/dce)
 [![Code Climate](https://img.shields.io/codeclimate/maintainability/xendk/dce.svg?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
 [![Issue Count](https://img.shields.io/codeclimate/issues/github/xendk/dce.svg?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
-[![Codecov](https://img.shields.io/codecov/c/github/xendk/dce.svg?style=for-the-badge)]()
+[![Codecov](https://img.shields.io/codecov/c/github/xendk/dce.svg?style=for-the-badge)](https://codecov.io/gh/xendk/dce)
 
-[![Gem](https://img.shields.io/gem/v/dce.svg?style=for-the-badge)]()
-[![Gem](https://img.shields.io/gem/dt/dce.svg?style=for-the-badge)]()
+[![Gem](https://img.shields.io/gem/v/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
+[![Gem](https://img.shields.io/gem/dt/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
 
 Simple command for running shell commands in a docker container
 started by docker-compose.
