@@ -1,12 +1,17 @@
 require 'open3'
 require 'timeout'
 
+def filter_output(string)
+  lines = string.chomp.split(/\r\n/)
+  (lines.nil? or lines.empty?) ? "" : lines.join("\n")
+end
+
 def run(command)
   Timeout::timeout 2 do
     stdout, stderr, status = Open3.capture3(command)
     # Deal with carriage returns and trailing newline.
-    stdout = stdout.chomp.gsub(/\r\n/, "\n")
-    stderr = stderr.chomp.gsub(/\r\n/, "\n")
+    stdout = filter_output(stdout)
+    stderr = filter_output(stderr)
     return stdout, stderr, status
   end
 end
