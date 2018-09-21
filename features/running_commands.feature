@@ -43,3 +43,12 @@ Feature: Run commands
     When I run "dce -n 'echo test'"
     Then I should see the verbose command message
     And I should see no output
+
+  Scenario: Handle non-started servers
+    Given I'm in the simple project
+    And I have stopped and removed containers
+    When I run "dce -n 'echo test'"
+    Then I should see the error output
+      """
+      Contoiner runner not created.
+      """

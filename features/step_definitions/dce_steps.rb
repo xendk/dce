@@ -37,6 +37,11 @@ Then(/^I should see the output$/) do |string|
   raise "Output \"#{@stdout}\" does not match expected output" unless @stdout === string
 end
 
+Then(/^I should see the error output$/) do |string|
+  raise "Stderr output \"#{@stderr}\" does not match expected output" unless @stderr === string
+  @stderr = ''
+end
+
 Then(/^I should see the verbose command message$/) do
   raise "No verbose message seen" unless @stderr.match(/^Exec'ing: docker exec/)
   @stderr.gsub!(/^Exec'ing: docker exec.*$/, '');
@@ -51,6 +56,10 @@ Then(/^I should only see verbose command message$/) do
     raise "Output \"#{@stderr}\" isn't just the verbose message"
   end
   @stderr.gsub!(/^Exec'ing: docker exec.*$/, '');
+end
+
+Given("I have stopped and removed containers") do
+  system "docker-compose stop -t 0  2>/dev/null; docker-compose rm -vf  >/dev/null 2>/dev/null" if @project
 end
 
 After do
