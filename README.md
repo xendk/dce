@@ -12,6 +12,12 @@ DCE
 Simple command for running shell commands in a docker container
 started by docker-compose.
 
+Install
+-------------------------
+Run `gem install dce`
+
+Usage
+-------------------------
 ```shell
 Usage: dce [OPTIONS]... COMMAND
 Runs COMMAND in docker-compose container.
