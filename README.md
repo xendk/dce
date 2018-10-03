@@ -14,7 +14,7 @@ started by docker-compose.
 
 Install
 -------------------------
-Run `gem install dce`
+Run `gem install dce`. If you only want to install it for your own user, use the `--user-install` flag.
 
 Usage
 -------------------------
