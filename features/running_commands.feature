@@ -50,7 +50,7 @@ Feature: Run commands
     When I run "dce -n 'echo test'"
     Then I should see the error output
       """
-      Contoiner runner not created.
+      Container runner not created.
       """
 
   Scenario: Listing multiple containers

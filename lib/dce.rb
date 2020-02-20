@@ -44,7 +44,7 @@ class DCE
     args += 't' if STDIN.tty?
     container_id = %x{docker-compose ps -q #{@container}}.chomp
 
-    abort("Contoiner #{@container} not created.") if container_id.empty?
+    abort("Container #{@container} not created.") if container_id.empty?
 
     command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
     STDERR.puts "Exec'ing: " + command if @verbose
