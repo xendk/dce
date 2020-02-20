@@ -47,3 +47,14 @@ Limitations
 -----------
 
 DCE currently require the container to have `/bin/sh`.
+
+Development
+-----------
+
+To run tests, you'll need docker-compose (obviously), and cucumber:
+
+``` shell
+gem install --user-install cucumber
+```
+
+Use `make test` to run the test-suite.
