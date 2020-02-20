@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  runner:
+    image: alpine:3.6
+    # Just keep it up for one minute. Should be enough for the tests.
+    entrypoint: sleep 60
+
+  walker:
+    image: alpine:3.6
+    # Just keep it up for one minute. Should be enough for the tests.
+    entrypoint: sleep 60

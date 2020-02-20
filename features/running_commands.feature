@@ -52,3 +52,19 @@ Feature: Run commands
       """
       Contoiner runner not created.
       """
+
+  Scenario: Listing multiple containers
+    Given I'm in the multiple project
+    When I run "dce -l"
+    Then I should see the output
+      """
+      runner, walker
+      """
+
+  Scenario: Listing containers
+    Given I'm in the simple project
+    When I run "dce -l"
+    Then I should see the output
+      """
+      runner
+      """
