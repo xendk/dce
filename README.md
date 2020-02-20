@@ -1,10 +1,12 @@
 DCE
 ===
 
-[![Travis](https://img.shields.io/travis/xendk/dce.svg?style=for-the-badge)](https://travis-ci.org/xendk/dce)
-[![Code Climate](https://img.shields.io/codeclimate/maintainability/xendk/dce.svg?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
-[![Issue Count](https://img.shields.io/codeclimate/issues/github/xendk/dce.svg?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xendk/dce/Run%20tests%20and%20publish?style=for-the-badge)
 [![Codecov](https://img.shields.io/codecov/c/github/xendk/dce.svg?style=for-the-badge)](https://codecov.io/gh/xendk/dce)
+
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
+[![Code Climate issues](https://img.shields.io/codeclimate/issues/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
+[![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
 
 [![Gem](https://img.shields.io/gem/v/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
 [![Gem](https://img.shields.io/gem/dt/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
@@ -48,3 +50,18 @@ Limitations
 -----------
 
 DCE currently require the container to have `/bin/sh`.
+
+Development
+-----------
+
+To run tests, you'll need docker-compose (obviously), and cucumber:
+
+``` shell
+gem install --user-install cucumber
+```
+
+Use `make test` to run the test-suite.
+
+Remember to update the version in dce.gemspec when creating a pull
+request. Bump major version for backwards compatibility breaking
+changes, minor for new features and patch level for bug fixes.
