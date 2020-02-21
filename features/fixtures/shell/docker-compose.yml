@@ -4,4 +4,4 @@ services:
   shell:
     build: shell-image
     # Just keep it up for one minute. Should be enough for the tests.
-    entrypoint: sleep 300
+    entrypoint: sleep 60

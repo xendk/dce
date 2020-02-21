@@ -15,6 +15,10 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
+    - name: Prepare fixtures
+      run: |
+        cd features/fixtures/shell
+        docker-compose build
     - name: Run Cucumber tests
       run: |
         gem install cucumber codecov
