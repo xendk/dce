@@ -13,6 +13,11 @@ class DCE
       config_container = File.read @conf_file
     end
 
+    if @list_containers
+      STDOUT.puts(get_containers.join(', '))
+      exit
+    end
+
     if @query
       if config_container
         STDOUT.puts(config_container)
@@ -39,7 +44,7 @@ class DCE
     args += 't' if STDIN.tty?
     container_id = %x{docker-compose ps -q #{@container}}.chomp
 
-    abort("Contoiner #{@container} not created.") if container_id.empty?
+    abort("Container #{@container} not created.") if container_id.empty?
 
     command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
     STDERR.puts "Exec'ing: " + command if @verbose
@@ -87,6 +92,8 @@ class DCE
         @dry_run = true
       when '-?', '--print-service'
         @query = true
+      when '-l', '--list-containers'
+        @list_containers = true
       when '-h', '--help'
         STDERR.puts <<-HEREDOC
 Usage: #{File.basename($0)} [OPTIONS]... COMMAND
@@ -103,6 +110,7 @@ Options:
   -v, --verbose               print exec'ed command
   -n, --dry-run               only print exec'ed command, don't run
   -?, --print-service         print the service saved
+  -l, --list-containers       print the containers available
   -h, --help                  print this help and exit
 
         HEREDOC

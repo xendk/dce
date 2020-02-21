@@ -35,6 +35,7 @@ replaces the selected container in the .dce_container
 -v, --verbose               print exec'ed command
 -n, --dry-run               only print exec'ed command, don't run
 -?, --print-service         print the service saved
+-l, --list-containers       print the containers available
 -h, --help                  print this help and exit
 ```
 
