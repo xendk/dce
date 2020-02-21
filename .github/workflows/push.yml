@@ -41,7 +41,7 @@ jobs:
     - name: Publish to RubyGems
       run: |
         # Replace version in gemspec with tag name.
-        sed s/VERSION/${GITHUB_REF/refs\/tags\//}/ dce.gemspec
+        sed -i s/VERSION/${GITHUB_REF/refs\/tags\//}/ dce.gemspec
         mkdir -p $HOME/.gem
         touch $HOME/.gem/credentials
         chmod 0600 $HOME/.gem/credentials
