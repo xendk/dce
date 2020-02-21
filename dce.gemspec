@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'dce'
-  s.version     = '1.0.2'
+  s.version     = 'VERSION'
   s.summary     = "DCE"
   s.description = "Run shell commands in docker."
   s.authors     = ["Thomas Fini Hansen"]
