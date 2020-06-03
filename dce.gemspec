@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.email       = 'xen@xen.dk'
   s.homepage    =
     'https://github.com/xendk/dce'
+  s.files = Dir['lib/*.rb'] + Dir['bin/*']
   s.executables << 'dce'
   s.license     = 'GPL-3.0'
 end
