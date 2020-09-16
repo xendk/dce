@@ -61,7 +61,3 @@ gem install --user-install cucumber
 ```
 
 Use `make test` to run the test-suite.
-
-Remember to update the version in dce.gemspec when creating a pull
-request. Bump major version for backwards compatibility breaking
-changes, minor for new features and patch level for bug fixes.
