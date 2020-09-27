@@ -35,7 +35,7 @@ class DCE
 
     if @container != config_container
       File.write(@conf_file, @container)
-			query_gitignore_entry
+      query_gitignore_entry
     end
 
     # If no command given, open a shell.
@@ -146,17 +146,17 @@ Options:
   end
 
   def query_gitignore_entry
-		if !File.readlines(".gitignore").grep(/#{CONF_FILE_NAME}/i).any?
-			STDERR.puts "Do you want to add configuration file to .gitignore? [y/n]"
-			git_ignore_conf_file = STDIN.gets.strip != 'y' ? 'n' : 'y';
-			if git_ignore_conf_file == 'y'
-				open('.gitignore', 'a') do |f|
-					f << "\n"
-					f << "# From dce script:\n"
-					f << "#{CONF_FILE_NAME}\n"
-				end
-			end
-		end
+    if !File.readlines(".gitignore").grep(/#{CONF_FILE_NAME}/i).any?
+      STDERR.puts "Do you want to add configuration file to .gitignore? [y/n]"
+      git_ignore_conf_file = STDIN.gets.strip != 'y' ? 'n' : 'y';
+      if git_ignore_conf_file == 'y'
+        open('.gitignore', 'a') do |f|
+          f << "\n"
+          f << "# From dce script:\n"
+          f << "#{CONF_FILE_NAME}\n"
+        end
+      end
+    end
   end
 
 end
