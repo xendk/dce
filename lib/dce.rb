@@ -3,11 +3,13 @@
 # Option for using run instead of exec?
 
 class DCE
+  CONF_FILE_NAME = '.dce_container'
+
   # Run the command
   def run
     parse_args
 
-    @conf_file = File.join(File.dirname(docker_compose_file), '.dce_container')
+    @conf_file = File.join(File.dirname(docker_compose_file), CONF_FILE_NAME)
     config_container = nil
     if File.exists? @conf_file
       config_container = File.read @conf_file
@@ -33,6 +35,7 @@ class DCE
 
     if @container != config_container
       File.write(@conf_file, @container)
+			query_gitignore_entry
     end
 
     # If no command given, open a shell.
@@ -141,4 +144,19 @@ Options:
     content = YAML::load(File.read(docker_compose_file))
     content.has_key?('version') ? content['services'].keys : content.keys
   end
+
+  def query_gitignore_entry
+		if !File.readlines(".gitignore").grep(/#{CONF_FILE_NAME}/i).any?
+			STDERR.puts "Do you want to add configuration file to .gitignore? [y/n]"
+			git_ignore_conf_file = STDIN.gets.strip != 'y' ? 'n' : 'y';
+			if git_ignore_conf_file == 'y'
+				open('.gitignore', 'a') do |f|
+					f << "\n"
+					f << "# From dce script:\n"
+					f << "#{CONF_FILE_NAME}\n"
+				end
+			end
+		end
+  end
+
 end
