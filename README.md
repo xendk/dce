@@ -42,7 +42,7 @@ replaces the selected container in the .dce_container
 Optional, but nice, setup
 -------------------------
 
-* Add `.dce_container` to `$HOME/.gitexcludes`.
+* Add `.dce_container` to `$HOME/.config/git/ignore`.
 * `alias dc=docker-compose`
 * `alias dcd="dce drush"`
 
