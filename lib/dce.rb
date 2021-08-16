@@ -57,10 +57,10 @@ class DCE
     unless @compose_file
       dir = Dir.pwd()
       while dir != "/"
-        file = File.join(dir, 'docker-compose.yml')
-        if FileTest.exists?(file)
-          @compose_file = file
-          break;
+        file = Dir.glob('docker-compose.{yml,yaml}', base: dir).first
+        if file
+          @compose_file = File.join(dir, file)
+          break
         end
         dir = File.dirname(dir)
       end
