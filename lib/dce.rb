@@ -138,7 +138,14 @@ Options:
 
   # Read containers from docker-compose.yml
   def get_containers
-    content = YAML::load(File.read(docker_compose_file))
+    # Older Psychs took whether to allow YAML aliases as a fourth
+    # argument, while newer has a keyword argument. Try both to be
+    # compatible with as many versions as possible.
+    begin
+      content = YAML::safe_load(File.read(docker_compose_file), aliases: true)
+    rescue ArgumentError
+      content = YAML::safe_load(File.read(docker_compose_file), [], [], true)
+    end
     content.has_key?('version') ? content['services'].keys : content.keys
   end
 end
