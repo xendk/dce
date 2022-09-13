@@ -21,9 +21,13 @@ jobs:
         docker-compose build
     - name: Run Cucumber tests
       run: |
-        gem install cucumber codecov
+        gem install cucumber simplecov-cobertura
         export PATH=$PATH:$PWD
         cucumber
+
+    - uses: codecov/codecov-action@v3
+      with:
+        fail_ci_if_error: true # optional (default = false)
 
   publish:
     name: publish

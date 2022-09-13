@@ -5,6 +5,7 @@
 require 'yaml'
 if ENV['COVERAGE']
   require 'simplecov'
+  SimpleCov.print_error_status = false
 
   # Redefine exec to save coverage first.
   module Kernel
