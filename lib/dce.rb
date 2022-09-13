@@ -15,7 +15,7 @@ class DCE
     config_container = File.read(@conf_file) if File.exist? @conf_file
 
     if @list_containers
-      $stdout.puts(get_containers.join(', '))
+      $stdout.puts(containers.join(', '))
       exit
     end
 
@@ -77,7 +77,7 @@ class DCE
       case option
       when '-c', '--container'
         @container = ARGV.shift
-        abort "Unknown container #{@container}" unless get_containers.include? @container
+        abort "Unknown container #{@container}" unless containers.include? @container
       when '-v', '--verbose'
         @verbose = true
       when '-n', '--dry-run'
@@ -119,7 +119,6 @@ class DCE
   # Ask the user to select a container
   # The options are taken from the docker-compose.yml file
   def query_container
-    containers = get_containers
     warn "Please select container [#{containers.join(', ')}]"
     choice = $stdin.gets.strip
     exit if choice.empty?
@@ -129,15 +128,19 @@ class DCE
   end
 
   # Read containers from docker-compose.yml
-  def get_containers
-    # Older Psychs took whether to allow YAML aliases as a fourth
-    # argument, while newer has a keyword argument. Try both to be
-    # compatible with as many versions as possible.
-    begin
-      content = YAML.safe_load(File.read(docker_compose_file), aliases: true)
-    rescue ArgumentError
-      content = YAML.safe_load(File.read(docker_compose_file), [], [], true)
+  def containers
+    unless @containers
+      # Older Psychs took whether to allow YAML aliases as a fourth
+      # argument, while newer has a keyword argument. Try both to be
+      # compatible with as many versions as possible.
+      begin
+        content = YAML.safe_load(File.read(docker_compose_file), aliases: true)
+      rescue ArgumentError
+        content = YAML.safe_load(File.read(docker_compose_file), [], [], true)
+      end
+      @containers = content.key?('version') ? content['services'].keys : content.keys
     end
-    content.key?('version') ? content['services'].keys : content.keys
+
+    @containers
   end
 end
