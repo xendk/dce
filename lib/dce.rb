@@ -37,13 +37,12 @@ class DCE
       @command = 'if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi'
     end
 
-    args = '-i'
-    args += 't' if $stdin.tty?
     container_id = `docker-compose ps -q #{@container}`.chomp
 
     abort("Container #{@container} not created.") if container_id.empty?
 
-    command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
+    tty = $stdin.tty? ? 't' : ''
+    command = "docker exec -i#{tty} #{container_id} sh -c '#{@command}'"
     warn "Exec'ing: #{command}" if @verbose
     exec command unless @dry_run
   end
