@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 # Wishlist:
 # Option to delete .dce_container.
 # Option for using run instead of exec?
 
+# The dce commmand class.
 class DCE
   # Run the command
   def run
@@ -9,45 +12,39 @@ class DCE
 
     @conf_file = File.join(File.dirname(docker_compose_file), '.dce_container')
     config_container = nil
-    if File.exists? @conf_file
-      config_container = File.read @conf_file
-    end
+    config_container = File.read(@conf_file) if File.exist? @conf_file
 
     if @list_containers
-      STDOUT.puts(get_containers.join(', '))
+      $stdout.puts(get_containers.join(', '))
       exit
     end
 
     if @query
       if config_container
-        STDOUT.puts(config_container)
+        $stdout.puts(config_container)
         exit
       else
-        abort "No container saved."
+        abort 'No container saved.'
       end
     end
 
-    if !@container
-      @container = config_container ? config_container : query_container
-    end
+    @container ||= config_container || query_container
 
-    if @container != config_container
-      File.write(@conf_file, @container)
-    end
+    File.write(@conf_file, @container) if @container != config_container
 
     # If no command given, open a shell.
-    if (@command.strip.empty?)
-      @command = "if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi"
+    if @command.strip.empty?
+      @command = 'if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi'
     end
 
     args = '-i'
-    args += 't' if STDIN.tty?
-    container_id = %x{docker-compose ps -q #{@container}}.chomp
+    args += 't' if $stdin.tty?
+    container_id = `docker-compose ps -q #{@container}`.chomp
 
     abort("Container #{@container} not created.") if container_id.empty?
 
     command = "docker exec #{args} #{container_id} sh -c '#{@command}'"
-    STDERR.puts "Exec'ing: " + command if @verbose
+    warn "Exec'ing: #{command}" if @verbose
     exec command unless @dry_run
   end
 
@@ -55,8 +52,8 @@ class DCE
   # Will exit with an error if not found
   def docker_compose_file
     unless @compose_file
-      dir = Dir.pwd()
-      while dir != "/"
+      dir = Dir.pwd
+      while dir != '/'
         file = Dir.glob('docker-compose.{yml,yaml}', base: dir).first
         if file
           @compose_file = File.join(dir, file)
@@ -65,12 +62,10 @@ class DCE
         dir = File.dirname(dir)
       end
 
-      if !@compose_file
-        abort "No docker-compose.yml file found."
-      end
+      abort 'No docker-compose.yml file found.' unless @compose_file
     end
 
-    return @compose_file
+    @compose_file
   end
 
   # Parse command line arguments
@@ -82,9 +77,7 @@ class DCE
       case option
       when '-c', '--container'
         @container = ARGV.shift
-        if !get_containers.include? @container
-          abort "Unknown container #{@container}"
-        end
+        abort "Unknown container #{@container}" unless get_containers.include? @container
       when '-v', '--verbose'
         @verbose = true
       when '-n', '--dry-run'
@@ -95,23 +88,23 @@ class DCE
       when '-l', '--list-containers'
         @list_containers = true
       when '-h', '--help'
-        STDERR.puts <<-HEREDOC
-Usage: #{File.basename($0)} [OPTIONS]... COMMAND
-Runs COMMAND in docker-compose container.
+        warn <<~HEREDOC
+          Usage: #{File.basename($PROGRAM_NAME)} [OPTIONS]... COMMAND
+          Runs COMMAND in docker-compose container.
 
-On first run, asks for the service container to use and saves it to .dce_container next
-to the docker-compose.yml file.
+          On first run, asks for the service container to use and saves it to .dce_container next
+          to the docker-compose.yml file.
 
-If no command given, opens a shell.
+          If no command given, opens a shell.
 
-Options:
-  -c, --container SERVICE     use the container of the specified service
+          Options:
+            -c, --container SERVICE     use the container of the specified service
                               replaces the selected container in the .dce_container
-  -v, --verbose               print exec'ed command
-  -n, --dry-run               only print exec'ed command, don't run
-  -?, --print-service         print the service saved
-  -l, --list-containers       print the containers available
-  -h, --help                  print this help and exit
+            -v, --verbose               print exec'ed command
+            -n, --dry-run               only print exec'ed command, don't run
+            -?, --print-service         print the service saved
+            -l, --list-containers       print the containers available
+            -h, --help                  print this help and exit
 
         HEREDOC
         exit
@@ -127,12 +120,11 @@ Options:
   # The options are taken from the docker-compose.yml file
   def query_container
     containers = get_containers
-    STDERR.puts "Please select container [#{containers.join(', ')}]"
-    choice = STDIN.gets.strip
+    warn "Please select container [#{containers.join(', ')}]"
+    choice = $stdin.gets.strip
     exit if choice.empty?
-    if !containers.include?(choice)
-      abort "Illegal choice."
-    end
+
+    abort 'Illegal choice.' unless containers.include?(choice)
     choice
   end
 
@@ -142,10 +134,10 @@ Options:
     # argument, while newer has a keyword argument. Try both to be
     # compatible with as many versions as possible.
     begin
-      content = YAML::safe_load(File.read(docker_compose_file), aliases: true)
+      content = YAML.safe_load(File.read(docker_compose_file), aliases: true)
     rescue ArgumentError
-      content = YAML::safe_load(File.read(docker_compose_file), [], [], true)
+      content = YAML.safe_load(File.read(docker_compose_file), [], [], true)
     end
-    content.has_key?('version') ? content['services'].keys : content.keys
+    content.key?('version') ? content['services'].keys : content.keys
   end
 end
