@@ -5,7 +5,6 @@
 require 'yaml'
 if ENV['COVERAGE']
   require 'simplecov'
-  SimpleCov.print_error_status = false
 
   # Redefine exec to save coverage first.
   module Kernel
@@ -18,11 +17,12 @@ if ENV['COVERAGE']
   end
 
   SimpleCov.at_exit do
+    # Merge results with coverage from other processes, but suppresses
+    # formatting and output.
     SimpleCov.result
   end
 end
 
-# Possibly not the right way to load file.
 require_relative '../lib/dce'
 
 app = DCE.new
