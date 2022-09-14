@@ -8,11 +8,11 @@ jobs:
 
     strategy:
       matrix:
-        ruby: [2.5, 2.6, 2.7]
+        ruby: [2.7, 3.0, 3.1, 3.2]
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.6
-      uses: actions/setup-ruby@v1
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
     - name: Prepare fixtures
@@ -21,9 +21,13 @@ jobs:
         docker-compose build
     - name: Run Cucumber tests
       run: |
-        gem install cucumber codecov
+        gem install cucumber simplecov-cobertura
         export PATH=$PATH:$PWD
         cucumber
+
+    - uses: codecov/codecov-action@v3
+      with:
+        fail_ci_if_error: true # optional (default = false)
 
   publish:
     name: publish

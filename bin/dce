@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 
+# frozen_string_literal: true
+
 require 'yaml'
 if ENV['COVERAGE']
   require 'simplecov'
 
   # Redefine exec to save coverage first.
   module Kernel
-    alias_method :exec_real, :exec
+    alias exec_real exec
 
     def exec(command)
       SimpleCov.result
@@ -15,12 +17,13 @@ if ENV['COVERAGE']
   end
 
   SimpleCov.at_exit do
+    # Merge results with coverage from other processes, but suppresses
+    # formatting and output.
     SimpleCov.result
   end
 end
 
-# Possibly not the right way to load file.
-require_relative '../lib/dce.rb'
+require_relative '../lib/dce'
 
 app = DCE.new
 app.run

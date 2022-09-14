@@ -2,11 +2,11 @@
 VERSION := $(shell ruby -r rubygems -e 'spec = Gem::Specification::load("dce.gemspec"); puts spec.version')
 
 test:
-	cucumber -f progress
+	bundle exec cucumber -f progress
 
 test-coverage:
 	rm -rf coverage
-	env COVERAGE=1 cucumber -f progress
+	env COVERAGE=1 bundle exec cucumber -f progress
 
 dce-$(VERSION).gem: dce.gemspec bin/dce
 	gem build dce.gemspec
