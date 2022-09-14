@@ -4,10 +4,6 @@ DCE
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xendk/dce/Run%20tests%20and%20publish?style=for-the-badge)
 [![Codecov](https://img.shields.io/codecov/c/github/xendk/dce.svg?style=for-the-badge)](https://codecov.io/gh/xendk/dce)
 
-[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
-[![Code Climate issues](https://img.shields.io/codeclimate/issues/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
-[![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/xendk/dce?style=for-the-badge)](https://codeclimate.com/github/xendk/dce)
-
 [![Gem](https://img.shields.io/gem/v/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
 [![Gem](https://img.shields.io/gem/dt/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
 
