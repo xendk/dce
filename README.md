@@ -1,7 +1,7 @@
 DCE
 ===
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xendk/dce/Run%20tests%20and%20publish?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/xendk/dce/push.yml?style=for-the-badge&branch=main)
 [![Codecov](https://img.shields.io/codecov/c/github/xendk/dce.svg?style=for-the-badge)](https://codecov.io/gh/xendk/dce)
 
 [![Gem](https://img.shields.io/gem/v/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
