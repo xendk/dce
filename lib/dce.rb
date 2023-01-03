@@ -137,7 +137,7 @@ class DCE
       rescue ArgumentError
         content = YAML.safe_load(File.read(docker_compose_file), [], [], true)
       end
-      @containers = content.key?('version') ? content['services'].keys : content.keys
+      @containers = content.key?('services') ? content['services'].keys : content.keys
     end
 
     @containers
