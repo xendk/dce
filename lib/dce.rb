@@ -37,7 +37,7 @@ class DCE
       @command = 'if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi'
     end
 
-    container_id = `docker-compose ps -q #{@container}`.chomp
+    container_id = `docker compose ps -q #{@container}`.chomp
 
     abort("Container #{@container} not created.") if container_id.empty?
 
@@ -89,7 +89,7 @@ class DCE
       when '-h', '--help'
         warn <<~HEREDOC
           Usage: #{File.basename($PROGRAM_NAME)} [OPTIONS]... COMMAND
-          Runs COMMAND in docker-compose container.
+          Runs COMMAND in docker compose container.
 
           On first run, asks for the service container to use and saves it to .dce_container next
           to the docker-compose.yml file.

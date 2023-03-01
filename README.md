@@ -8,7 +8,7 @@ DCE
 [![Gem](https://img.shields.io/gem/dt/dce.svg?style=for-the-badge)](https://rubygems.org/gems/dce)
 
 Simple command for running shell commands in a docker container
-started by docker-compose.
+started by docker compose.
 
 Install
 -------------------------
@@ -18,7 +18,7 @@ Usage
 -------------------------
 ```shell
 Usage: dce [OPTIONS]... COMMAND
-Runs COMMAND in docker-compose container.
+Runs COMMAND in docker compose container.
 
 On first run, asks for the service container to use and saves it to .dce_container next
 to the docker-compose.yml file.
@@ -39,7 +39,7 @@ Optional, but nice, setup
 -------------------------
 
 * Add `.dce_container` to `$HOME/.config/git/ignore`.
-* `alias dc=docker-compose`
+* `alias dc="docker compose"`
 * `alias dcd="dce drush"`
 
 Limitations
@@ -50,7 +50,7 @@ DCE currently require the container to have `/bin/sh`.
 Development
 -----------
 
-To run tests, you'll need docker-compose (obviously), and cucumber:
+To run tests, you'll need docker compose (obviously), and cucumber:
 
 ``` shell
 gem install --user-install cucumber
