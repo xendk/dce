@@ -18,14 +18,14 @@ jobs:
     - name: Prepare fixtures
       run: |
         cd features/fixtures/shell
-        docker-compose build
+        docker compose build
     - name: Run Cucumber tests
       run: |
         gem install cucumber simplecov-cobertura
         export PATH=$PATH:$PWD
         cucumber
 
-    - uses: codecov/codecov-action@v4
+    - uses: codecov/codecov-action@v5
       with:
         # Needed for Dependabot PRs.
         token: ${{ secrets.CODECOV_TOKEN }}
