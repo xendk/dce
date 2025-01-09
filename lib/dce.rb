@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'shellwords'
+
 # Wishlist:
 # Option to delete .dce_container.
 # Option for using run instead of exec?
@@ -112,7 +114,7 @@ class DCE
       end
     end
 
-    @command = ARGV.join(' ')
+    @command = ARGV.shelljoin
   end
 
   # Ask the user to select a container
