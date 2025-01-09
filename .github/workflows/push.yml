@@ -18,7 +18,7 @@ jobs:
     - name: Prepare fixtures
       run: |
         cd features/fixtures/shell
-        docker-compose build
+        docker compose build
     - name: Run Cucumber tests
       run: |
         gem install cucumber simplecov-cobertura
