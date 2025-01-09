@@ -34,7 +34,7 @@ class DCE
 
     # If no command given, open a shell.
     if @command.strip.empty?
-      @command = 'if [ -e /usr/bin/fish ]; then /usr/bin/fish; elif [ -e /bin/bash ]; then /bin/bash; else /bin/sh; fi'
+      @command = 'if [ -e /usr/bin/fish ]; then exec /usr/bin/fish; elif [ -e /bin/bash ]; then exec /bin/bash; else exec /bin/sh; fi'
     end
 
     container_id = `docker compose ps -q #{@container}`.chomp
