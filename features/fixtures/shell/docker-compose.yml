@@ -1,5 +1,3 @@
-version: '2'
-
 services:
   shell:
     build: shell-image
