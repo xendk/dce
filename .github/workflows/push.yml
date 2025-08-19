@@ -25,11 +25,9 @@ jobs:
         export PATH=$PATH:$PWD
         cucumber
 
-    - uses: codecov/codecov-action@v4
+    - uses: codecov/codecov-action@v5
       with:
-        # Needed for Dependabot PRs.
-        token: ${{ secrets.CODECOV_TOKEN }}
-        # fail_ci_if_error: true # optional (default = false)
+        fail_ci_if_error: true # optional (default = false)
 
   publish:
     name: publish
