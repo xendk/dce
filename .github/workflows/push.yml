@@ -29,7 +29,7 @@ jobs:
       with:
         # Needed for Dependabot PRs.
         token: ${{ secrets.CODECOV_TOKEN }}
-        # fail_ci_if_error: true # optional (default = false)
+        fail_ci_if_error: true # optional (default = false)
 
   publish:
     name: publish
