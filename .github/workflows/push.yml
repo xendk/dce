@@ -27,8 +27,6 @@ jobs:
 
     - uses: codecov/codecov-action@v5
       with:
-        # Needed for Dependabot PRs.
-        token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: true # optional (default = false)
 
   publish:
